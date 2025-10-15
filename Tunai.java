@@ -1,5 +1,4 @@
 import java.text.DecimalFormat;
-// Tunai.java
 public class Tunai extends MetodePembayaran {
     private double jumlahBayarTunai;
 
@@ -10,7 +9,6 @@ public class Tunai extends MetodePembayaran {
 
     @Override
     public boolean validasi() {
-        // Logika validasi Tunai: memastikan uang yang dibayarkan tidak kurang
         return jumlahBayarTunai >= getJumlahPembayaran();
     }
 
@@ -20,10 +18,8 @@ public class Tunai extends MetodePembayaran {
         throw new PembayaranGagalException("Pembayaran Tunai Gagal. Uang yang diberikan kurang dari " + getJumlahPembayaran());
     }
 
-    // Skema Keberhasilan
     double kembalian = jumlahBayarTunai - getJumlahPembayaran();
     
-    // Gunakan DecimalFormat untuk menghindari notasi ilmiah
     DecimalFormat formatter = new DecimalFormat("#,##0.00");
     
     System.out.printf("Pembayaran Tunai berhasil. Kembalian: Rp %s\n", formatter.format(kembalian));

@@ -1,5 +1,4 @@
 public class Barang {
-    // enkapsulasi
     private String nama;
     private double hargaSatuan;
 
@@ -8,7 +7,6 @@ public class Barang {
         this.hargaSatuan = hargaSatuan;
     }
 
-    // getter untuk akses terkontrolnya
     public String getNama() {
         return nama;
     }

@@ -5,13 +5,11 @@ import java.text.DecimalFormat;
 
 public class MainKasir {
     
-    // --- Data Pelanggan yang kini PERSISTEN (dipertahankan antar transaksi) ---
     private static double saldoDebitSaatIni = 50000000.0;
-    private static double saldoEWalletSaatIni = 5000000.0; // Saldo awal yang lebih kecil
+    private static double saldoEWalletSaatIni = 5000000.0;
     private static final String NO_KARTU_DEBIT = "1234567890123456";
     private static final String ID_EWALLET = "pelanggan@ewallet.com";
     
-    // Inventaris Toko (Tetap sama)
     private static final List<Barang> INVENTARIS = new ArrayList<>();
     
     static {
@@ -27,20 +25,18 @@ public class MainKasir {
         Kasir kasir = new Kasir();
         boolean belanjaLagi = true;
         
-        System.out.println("================ SISTEM KASIR TEKNOLOGI ================");
-        
-        // --- LOOP UTAMA TRANSAKSI ---
+        System.out.println("================ SISTEM KASIR KELOMPOK 6 ================");
+    
         while (belanjaLagi) {
             System.out.println("\n*** TRANSAKSI BARU ***");
             System.out.printf("Saldo Debit Saat Ini: Rp %,.2f | Saldo E-Wallet Saat Ini: Rp %,.2f\n", saldoDebitSaatIni, saldoEWalletSaatIni);
             
-            // 1. INPUT BARANG DAN HITUNG TOTAL
             double totalBelanja = 0;
             try {
                 totalBelanja = prosesInputBarang(scanner);
             } catch (java.util.InputMismatchException e) {
                 System.err.println("Input tidak valid. Membatalkan transaksi ini.");
-                scanner.nextLine(); // Membersihkan buffer
+                scanner.nextLine();
                 continue;
             }
 
@@ -51,20 +47,17 @@ public class MainKasir {
                 System.out.printf("Total Belanja yang Harus Dibayar: Rp %,.2f\n", totalBelanja);
                 System.out.println("======================================================");
 
-                // 2. PILIH METODE PEMBAYARAN & PROSES
                 try {
         prosesPembayaranDanUpdateSaldo(kasir, scanner, totalBelanja);
     } catch (RuntimeException e) {
         if (e.getMessage().equals("KELUAR_KASIR")) {
-            belanjaLagi = false; // Keluar dari loop utama
+            belanjaLagi = false; 
         } else if (e.getMessage().equals("ULANG_PEMESANAN")) {
-            // Ulangi loop utama (belanjaLagi=true), untuk mengulang pemesanan barang.
             System.out.println("\n*** Transaksi dibatalkan. Silakan pilih barang kembali. ***");
         }
     }
             }
             
-            // 3. TANYA USER UNTUK BELANJA KEMBALI
             boolean inputValid = false;
             while (!inputValid) {
                 System.out.print("\nApakah Anda ingin belanja kembali? (ya/tidak): ");
@@ -85,9 +78,6 @@ public class MainKasir {
         System.out.println("\nTerima kasih telah menggunakan sistem kasir.");
         scanner.close();
     }
-    
-    // --- Metode Pembantu untuk Proses Pembayaran dan Update Saldo ---
-    // MainKasir.java (Modifikasi metode prosesPembayaranDanUpdateSaldo)
 
 private static void prosesPembayaranDanUpdateSaldo(Kasir kasir, Scanner scanner, double totalBelanja) {
     boolean transaksiSelesai = false;
@@ -120,14 +110,11 @@ private static void prosesPembayaranDanUpdateSaldo(Kasir kasir, Scanner scanner,
                     return;
             }
 
-            // 4. Proses Pembayaran (Polimorfisme)
             System.out.println("\n*** Memproses Transaksi ***");
             kasir.prosesPembayaran(metodePilihan); 
             
-            // --- Jika Transaksi BERHASIL ---
             transaksiSelesai = true; 
             
-            // 5. UPDATE SALDO JIKA BERHASIL
             if (metodePilihan instanceof KartuDebit) {
                 KartuDebit kd = (KartuDebit) metodePilihan;
                 saldoDebitSaatIni = kd.getSaldoKartu(); 
@@ -137,11 +124,9 @@ private static void prosesPembayaranDanUpdateSaldo(Kasir kasir, Scanner scanner,
             }
 
         } catch (PembayaranGagalException e) {
-            // --- Jika Transaksi GAGAL ---
             System.err.println(" " + e.getMessage());
             System.out.println("------------------------------------");
             
-            // Tampilkan Menu Pilihan Lanjutan
             boolean menuGagalValid = false;
             while (!menuGagalValid) {
                 System.out.println("\n[ Pemberitahuan Transaksi Gagal ]");
@@ -154,21 +139,17 @@ private static void prosesPembayaranDanUpdateSaldo(Kasir kasir, Scanner scanner,
                     int pilihanGagal = scanner.nextInt();
                     
                     if (pilihanGagal == 1) {
-                        // Ulangi loop transaksiSelesai (default, tidak perlu break/continue)
                         menuGagalValid = true;
                     } else if (pilihanGagal == 2) {
-                        // Set saldo kembali ke nilai awal dan paksa keluar loop transaksiSelesai
-                        // Menggunakan throw custom exception untuk kembali ke loop utama 'belanjaLagi'
                         throw new RuntimeException("ULANG_PEMESANAN"); 
                     } else if (pilihanGagal == 3) {
-                        // Set status keluar dari kedua loop
                         throw new RuntimeException("KELUAR_KASIR");
                     } else {
                         System.out.println("Pilihan tidak valid.");
                     }
                 } else {
                     System.out.println("Input tidak valid. Harap masukkan angka (1/2/3).");
-                    scanner.next(); // Bersihkan buffer
+                    scanner.next(); 
                 }
             }
             
@@ -180,9 +161,7 @@ private static void prosesPembayaranDanUpdateSaldo(Kasir kasir, Scanner scanner,
     }
 }
     
-    // Metode prosesInputBarang (Tetap sama dengan solusi sebelumnya)
     private static double prosesInputBarang(Scanner scanner) {
-        // ... (Implementasi metode ini tetap sama)
         double total = 0;
         
         System.out.println("--- DAFTAR INVENTARIS ---");
@@ -199,7 +178,7 @@ private static void prosesPembayaranDanUpdateSaldo(Kasir kasir, Scanner scanner,
                 pilihanBarang = scanner.nextInt();
             } else {
                 System.out.println("Pilihan tidak valid.");
-                scanner.next(); // Buang input yang salah
+                scanner.next(); 
                 continue;
             }
 
